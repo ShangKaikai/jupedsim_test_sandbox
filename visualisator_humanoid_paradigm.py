@@ -67,24 +67,28 @@ def update(frame):
         pos_x, pos_y = agent[2], agent[3]
         ori_x, ori_y = agent[4], agent[5]
         head_pos_x, head_pos_y, head_pos_z = agent[6], agent[7], agent[8]
+        pelvis_left_x, pelvis_left_y, pelvis_left_z = agent[9], agent[10], agent[11]
+        pelvis_right_x, pelvis_right_y, pelvis_right_z = agent[12], agent[13], agent[14]
+        shoulder_right_x, shoulder_right_y, shoulder_right_z = agent[15], agent[16], agent[17]
+        shoulder_left_x, shoulder_left_y, shoulder_left_z = agent[18], agent[19], agent[20]
         normal_ori_x, normal_ori_y = -ori_y, ori_x
-        heel_right_pos_x, heel_right_pos_y = agent[12], agent[13]
-        heel_left_pos_x, heel_left_pos_y = agent[14], agent[15]
+        heel_right_pos_x, heel_right_pos_y = agent[24], agent[25]
+        heel_left_pos_x, heel_left_pos_y = agent[26], agent[27]
         shoulder_rotation_angle_z = agent[6]
         trunk_rotation_angle_x = agent[9]
         trunk_rotation_angle_y = agent[10]
 
         # Calculate the end points of the pelvis segment
-        pelvis_right_x = pos_x - (normal_ori_x * pelvis_width * 0.5)
-        pelvis_right_y = pos_y - (normal_ori_y * pelvis_width * 0.5)
-        pelvis_left_x = pos_x + (normal_ori_x * pelvis_width * 0.5)
-        pelvis_left_y = pos_y + (normal_ori_y * pelvis_width * 0.5)
+        # pelvis_right_x = pos_x - (normal_ori_x * pelvis_width * 0.5)
+        # pelvis_right_y = pos_y - (normal_ori_y * pelvis_width * 0.5)
+        # pelvis_left_x = pos_x + (normal_ori_x * pelvis_width * 0.5)
+        # pelvis_left_y = pos_y + (normal_ori_y * pelvis_width * 0.5)
 
         # Plot the pelvis segment
         ax.plot(
             [pelvis_right_x, pelvis_left_x],
             [pelvis_right_y, pelvis_left_y],
-            [0, 0],
+            [pelvis_right_z-pelvis_height, pelvis_left_z-pelvis_height],
             "b-",
         )
 
@@ -94,7 +98,7 @@ def update(frame):
         right_foot_end_x2 = heel_right_pos_x + (ori_x * feet_length)
         right_foot_end_y2 = heel_right_pos_y + (ori_y * feet_length)
 
-        # Plot the right foot
+        # # Plot the right foot
         ax.plot(
             [right_foot_end_x1, right_foot_end_x2],
             [right_foot_end_y1, right_foot_end_y2],
@@ -108,11 +112,11 @@ def update(frame):
         left_foot_end_x2 = heel_left_pos_x + (ori_x * feet_length)
         left_foot_end_y2 = heel_left_pos_y + (ori_y * feet_length)
 
-        # Plot the left foot
+        # # Plot the left foot
         ax.plot(
             [left_foot_end_x1, left_foot_end_x2],
             [left_foot_end_y1, left_foot_end_y2],
-            [-pelvis_height, -pelvis_height],
+            [-pelvis_height,-pelvis_height],
             "r-",
         )
 
@@ -120,30 +124,30 @@ def update(frame):
         ax.plot(
             [pelvis_right_x, right_foot_end_x1],
             [pelvis_right_y, right_foot_end_y1],
-            [0, -pelvis_height],
+            [pelvis_right_z-pelvis_height, -pelvis_height],
             "b-",
         )
         ax.plot(
             [pelvis_left_x, left_foot_end_x1],
             [pelvis_left_y, left_foot_end_y1],
-            [0, -pelvis_height],
+            [pelvis_left_z-pelvis_height, -pelvis_height],
             "b-",
         )
 
         # Calculate the position of C7
-        c7_pos_x = pos_x + ori_x * np.sin(trunk_rotation_angle_y) * trunk_length
-        c7_pos_y = pos_y + (ori_y * np.sin(trunk_rotation_angle_x) * trunk_length)
-        c7_pos_z = (
-            trunk_length
-            * np.cos(trunk_rotation_angle_x)
-            * np.cos(trunk_rotation_angle_y)
-        )
-
-        # Plot the trunk segment
+        # c7_pos_x = pos_x + ori_x * np.sin(trunk_rotation_angle_y) * trunk_length
+        # c7_pos_y = pos_y + (ori_y * np.sin(trunk_rotation_angle_x) * trunk_length)
+        # c7_pos_z = (
+        #     trunk_length
+        #     * np.cos(trunk_rotation_angle_x)
+        #     * np.cos(trunk_rotation_angle_y)
+        # )
+        pos_z = (pelvis_left_z+pelvis_right_z)/2
+        # # Plot the trunk segment
         ax.plot(
-            [pos_x, c7_pos_x],
-            [pos_y, c7_pos_y],
-            [0, c7_pos_z],
+            [pos_x, head_pos_x],
+            [pos_y, head_pos_y],
+            [pos_z-pelvis_height, head_pos_z-pelvis_height],
             "b-",
         )
 
@@ -153,27 +157,27 @@ def update(frame):
         # head_pos_z = c7_pos_z + head_length
 
         # Plot the head position ### Math have to be checked (x,y rotation missing)
-        ax.plot([head_pos_x], [head_pos_y], [head_pos_z], "b", marker="o", markersize=1)
+        ax.plot([head_pos_x], [head_pos_y], [head_pos_z-pelvis_height], "b", marker="o", markersize=1)
 
         # Calculate the shoulder segment
-        shoulder_right_x = c7_pos_x - (
-            np.cos(shoulder_rotation_angle_z) * normal_ori_x * shoulder_width * 0.5
-        )
-        shoulder_right_y = c7_pos_y - (
-            np.sin(shoulder_rotation_angle_z) * normal_ori_y * shoulder_width * 0.5
-        )
-        shoulder_left_x = c7_pos_x + (
-            np.cos(shoulder_rotation_angle_z) * normal_ori_x * shoulder_width * 0.5
-        )
-        shoulder_left_y = c7_pos_y + (
-            np.sin(shoulder_rotation_angle_z) * normal_ori_y * shoulder_width * 0.5
-        )
+        # shoulder_right_x = c7_pos_x - (
+        #     np.cos(shoulder_rotation_angle_z) * normal_ori_x * shoulder_width * 0.5
+        # )
+        # shoulder_right_y = c7_pos_y - (
+        #     np.sin(shoulder_rotation_angle_z) * normal_ori_y * shoulder_width * 0.5
+        # )
+        # shoulder_left_x = c7_pos_x + (
+        #     np.cos(shoulder_rotation_angle_z) * normal_ori_x * shoulder_width * 0.5
+        # )
+        # shoulder_left_y = c7_pos_y + (
+        #     np.sin(shoulder_rotation_angle_z) * normal_ori_y * shoulder_width * 0.5
+        # )
 
         # Plot the shoulder segment
         ax.plot(
             [shoulder_right_x, shoulder_left_x],
             [shoulder_right_y, shoulder_left_y],
-            [trunk_length, trunk_length],
+            [shoulder_right_z-pelvis_height, shoulder_left_z-pelvis_height],
             "b-",
         )
 
