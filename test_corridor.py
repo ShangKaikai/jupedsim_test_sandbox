@@ -19,6 +19,7 @@ pos_in_spawning_area = jps.distribute_until_filled(
     distance_to_polygon=0.3,
     seed=1,
 )
+print(pos_in_spawning_area)
 num_agents = len(pos_in_spawning_area)
 exit_area = Polygon([(0, 9), (2, 9), (2, 10), (0, 10)])
 
@@ -46,9 +47,9 @@ for pos, v0 in zip(pos_in_spawning_area, v_distribution):
             journey_id=journey_id,
             stage_id=exit_id,
             position=pos,
-            head_position=pos,
-            heel_right_position=(pos[0] + 0.20, pos[1]),
-            heel_left_position=(pos[0] - 0.20, pos[1]),
+            head_position=[pos[0], pos[1] , 1.7],
+            heel_right_position=(pos[0] + 0.10, pos[1]),
+            heel_left_position=(pos[0] - 0.10, pos[1]),
             desiredSpeed=v0,
             height=1.7,
         )

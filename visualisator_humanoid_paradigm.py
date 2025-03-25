@@ -5,7 +5,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
 # Connect to the SQLite database
-conn = sqlite3.connect("test_HumanoidModelV0.sqlite")
+conn = sqlite3.connect(r"D:\Desktop\J1\jupedsim\test_HumanoidModelV0.sqlite")
+
 cursor = conn.cursor()
 
 # Get the frame data
@@ -65,9 +66,10 @@ def update(frame):
     for agent in agent_data:
         pos_x, pos_y = agent[2], agent[3]
         ori_x, ori_y = agent[4], agent[5]
+        head_pos_x, head_pos_y, head_pos_z = agent[6], agent[7], agent[8]
         normal_ori_x, normal_ori_y = -ori_y, ori_x
-        heel_right_pos_x, heel_right_pos_y = agent[11], agent[12]
-        heel_left_pos_x, heel_left_pos_y = agent[13], agent[14]
+        heel_right_pos_x, heel_right_pos_y = agent[12], agent[13]
+        heel_left_pos_x, heel_left_pos_y = agent[14], agent[15]
         shoulder_rotation_angle_z = agent[6]
         trunk_rotation_angle_x = agent[9]
         trunk_rotation_angle_y = agent[10]
@@ -146,9 +148,9 @@ def update(frame):
         )
 
         # Calculate the head position ### Math have to be checked
-        head_pos_x = c7_pos_x
-        head_pos_y = c7_pos_y
-        head_pos_z = c7_pos_z + head_length
+        # head_pos_x = c7_pos_x
+        # head_pos_y = c7_pos_y
+        # head_pos_z = c7_pos_z + head_length
 
         # Plot the head position ### Math have to be checked (x,y rotation missing)
         ax.plot([head_pos_x], [head_pos_y], [head_pos_z], "b", marker="o", markersize=1)
@@ -185,14 +187,14 @@ ani = animation.FuncAnimation(
 )
 
 
-# plt.show()
-import matplotlib.animation as animation
+plt.show()
+# import matplotlib.animation as animation
 
-ani = animation.FuncAnimation(
-    fig,
-    update,
-    frames=range(1, max(frame_data, key=lambda x: x[0])[0] + 1),
-    interval=25,
-)
-writer = animation.FFMpegWriter(fps=30, metadata=dict(artist="Me"))
-ani.save("animation.mp4", writer=writer)
+# ani = animation.FuncAnimation(
+#     fig,
+#     update,
+#     frames=range(1, max(frame_data, key=lambda x: x[0])[0] + 1),
+#     interval=25,
+# )
+# writer = animation.FFMpegWriter(fps=30, metadata=dict(artist="Me"))
+# ani.save("animation.mp4", writer=writer)
